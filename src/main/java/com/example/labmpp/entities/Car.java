@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Locale;
 import java.util.UUID;
 
 @Data
@@ -23,4 +22,8 @@ public class Car {
     private Float value;
     private Integer horsepower;
     private Integer yearOfFabrication;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "service_history_id", referencedColumnName = "id")
+    private ServiceHistory serviceHistory;
 }
