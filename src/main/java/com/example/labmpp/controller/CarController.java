@@ -29,6 +29,12 @@ public class CarController {
         return new ResponseEntity<>(car, HttpStatus.OK);
     }
 
+    @GetMapping("/find-min-power/{id}")
+    public ResponseEntity<List<Car>> getCarsWithHorsepowerHigherThan(@PathVariable("horsepower") Integer horsepower) {
+        List<Car> cars = carService.findAllWithHorsepowerHigherThan(horsepower);
+        return new ResponseEntity<>(cars, HttpStatus.OK);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<Car> addCar(@RequestBody Car car) {
         Car newCar = carService.addCar(car);

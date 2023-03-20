@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CarService {
@@ -38,5 +39,11 @@ public class CarService {
     public Car findCarById(Long id) {
         return carRepository.findCarById(id)
                 .orElseThrow(() -> new CarNotFoundException("Car by id " + id + " was not found"));
+    }
+
+    public List<Car> findAllWithHorsepowerHigherThan(Integer horsepower) {
+        return this.findAll().stream()
+                .filter(car -> car.getHorsepower() > horsepower)
+                .collect(Collectors.toList());
     }
 }
