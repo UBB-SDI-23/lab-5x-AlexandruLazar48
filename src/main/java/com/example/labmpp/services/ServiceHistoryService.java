@@ -1,45 +1,43 @@
 package com.example.labmpp.services;
 
+import com.example.labmpp.entities.Car;
 import com.example.labmpp.entities.ServiceHistory;
 import com.example.labmpp.exception.CarNotFoundException;
 import com.example.labmpp.repository.CarRepository;
 import com.example.labmpp.repository.ServiceHistoryRepository;
-import com.example.labmpp.repository.ServiceRepository;
-import com.example.labmpp.utils.dtos.ServiceHistoryDTO;
-import com.example.labmpp.utils.dtos.ServiceRequest;
+import com.example.labmpp.utils.dtos.ServiceHistoryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
 public class ServiceHistoryService {
     private final ServiceHistoryRepository serviceHistoryRepository;
-    private final ServiceRepository serviceRepository;
+    private final CarRepository carRepository;
 
     @Autowired
-    public ServiceHistoryService(ServiceHistoryRepository serviceHistoryRepository, ServiceRepository serviceRepository, CarRepository carRepository) {
+    public ServiceHistoryService(ServiceHistoryRepository serviceHistoryRepository, CarRepository carRepository) {
         this.serviceHistoryRepository = serviceHistoryRepository;
-        this.serviceRepository = serviceRepository;
+        this.carRepository = carRepository;
     }
 
-    public ServiceHistory addServiceHistory(ServiceHistory serviceHistory) {
-        return serviceHistoryRepository.save(serviceHistory);
-    }
+    public ServiceHistory addServiceHistory(ServiceHistoryRequest serviceHistoryRequest) throws Exception {
 
-    public com.example.labmpp.entities.Service addServiceMade(ServiceRequest serviceRequest) throws Exception {
-        Optional<ServiceHistory> serviceHistory = serviceHistoryRepository.findById(serviceRequest.getServiceHistoryId());
-        com.example.labmpp.entities.Service service = serviceRequest.getService();
+        if (carRepository.findCarById(serviceHistoryRequest.getCarId()).isPresent()) {
+            Car car = carRepository.findCarById(serviceHistoryRequest.getCarId()).get();
+            if (car.getServiceHistory() != null) {
+                deleteServiceHistory(car.getServiceHistory().getId());
+            }
+            car.setServiceHistory(serviceHistoryRequest.getServiceHistory());
 
-        if (serviceHistory.isPresent()) {
-            service.setServiceHistory(serviceHistory.get());
-            return serviceRepository.save(service);
+            return carRepository.save(car).getServiceHistory();
         }
 
-        throw new Exception("Something went wrong, history not found");
+        throw new Exception("Car id not found");
     }
+
 
     public List<ServiceHistory> findAll() {
         return serviceHistoryRepository.findAll();
@@ -53,37 +51,8 @@ public class ServiceHistoryService {
         serviceHistoryRepository.deleteById(id);
     }
 
-    public ServiceHistory findServiceHistoryByCarId(Long id) {
-        return serviceHistoryRepository.findServiceHistoryByCarId(id)
+    public ServiceHistory findServiceHistoryById(Long id) {
+        return serviceHistoryRepository.findById(id)
                 .orElseThrow(() -> new CarNotFoundException("Service by id " + id + " was not found"));
     }
-
-
-    public ServiceHistoryDTO convertToDto(ServiceHistory serviceHistory) {
-        ServiceHistoryDTO serviceHistoryDTO = new ServiceHistoryDTO();
-
-        serviceHistoryDTO.setId(serviceHistory.getId());
-        serviceHistoryDTO.setAllowedToRun(serviceHistory.getIsAllowedToRun());
-        serviceHistoryDTO.setHasStockBody(serviceHistory.getHasStockBody());
-        serviceHistoryDTO.setYearlyTax(serviceHistory.getYearlyTax());
-        serviceHistoryDTO.setInsuranceTax(serviceHistory.getInsuranceTax());
-        serviceHistoryDTO.setCarId(serviceHistory.getCar().getId());
-        serviceHistoryDTO.setHasStockPowertrain(serviceHistory.getHasStockPowertrain());
-
-        return serviceHistoryDTO;
-    }
-
-//    public ServiceHistoryDTO convertDtoToEntity(ServiceHistoryDTO serviceHistoryDTO) {
-//        se
-//
-//        serviceHistoryDTO.setId(serviceHistory.getId());
-//        serviceHistoryDTO.setAllowedToRun(serviceHistory.getIsAllowedToRun());
-//        serviceHistoryDTO.setHasStockBody(serviceHistory.getHasStockBody());
-//        serviceHistoryDTO.setYearlyTax(serviceHistory.getYearlyTax());
-//        serviceHistoryDTO.setInsuranceTax(serviceHistory.getInsuranceTax());
-//        serviceHistoryDTO.setCarId(serviceHistory.getCar().getId());
-//        serviceHistoryDTO.setHasStockPowertrain(serviceHistory.getHasStockPowertrain());
-//
-//        return serviceHistoryDTO;
-//    }
 }
