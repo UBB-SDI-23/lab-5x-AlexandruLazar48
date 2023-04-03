@@ -60,5 +60,10 @@ public class CarController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
+    @GetMapping("/most-rented/{make}")
+    @JsonView(CustomJsonView.FullDataCar.class)
+    public ResponseEntity<Float> getMostRentedByMake(@PathVariable("make") String make) {
+        float average  = carService.getAverageRentalsByMake(make);
+        return new ResponseEntity<>(average, HttpStatus.OK);
+    }
 }

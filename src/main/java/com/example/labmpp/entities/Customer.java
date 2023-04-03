@@ -7,46 +7,35 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "car")
+@Table(name = "customer")
 @NoArgsConstructor
 @AllArgsConstructor
-@Transactional
-public class Car {
+public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonView(CustomJsonView.id.class)
     private Long id;
 
     @JsonView(CustomJsonView.CoreData.class)
-    private UUID code;
+    private String name;
 
     @JsonView(CustomJsonView.CoreData.class)
-    private String make;
+    private String cnp;
 
     @JsonView(CustomJsonView.CoreData.class)
-    private String model;
+    private Integer age;
 
     @JsonView(CustomJsonView.CoreData.class)
-    private Float value;
+    private Float budget;
 
     @JsonView(CustomJsonView.CoreData.class)
-    private Integer horsepower;
+    private String description;
 
-    @JsonView(CustomJsonView.CoreData.class)
-    private Integer yearOfFabrication;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "service_history_id", referencedColumnName = "id")
-    @JsonView(CustomJsonView.FullDataCar.class)
-    private ServiceHistory serviceHistory;
-
-    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL)
-    @JsonView(CustomJsonView.FullDataCar.class)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @JsonView(CustomJsonView.FullDataCustomer.class)
     List<RentalTransaction> rentalTransactions;
 }

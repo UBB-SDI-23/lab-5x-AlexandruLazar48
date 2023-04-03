@@ -1,13 +1,13 @@
 package com.example.labmpp.services;
 
 import com.example.labmpp.entities.Car;
+import com.example.labmpp.entities.RentalTransaction;
 import com.example.labmpp.exception.CarNotFoundException;
 import com.example.labmpp.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +37,7 @@ public class CarService {
     }
 
     public Car findCarById(Long id) {
-        return carRepository.findCarById(id)
+        return carRepository.findById(id)
                 .orElseThrow(() -> new CarNotFoundException("Car by id " + id + " was not found"));
     }
 
@@ -45,5 +45,21 @@ public class CarService {
         return this.findAll().stream()
                 .filter(car -> car.getHorsepower() > horsepower)
                 .collect(Collectors.toList());
+    }
+
+    public Float getAverageRentalsByMake(String make) {
+        List<Car> cars = this.findAll().stream().filter(car -> car.getMake().contains(make)).collect(Collectors.toList());
+        Set<Long> userIds = new HashSet<Long>();
+
+        for (Car car : cars) {
+            List<RentalTransaction> carRentalTransactions = car.getRentalTransactions();
+            carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
+        }
+
+        if (!userIds.isEmpty() && !cars.isEmpty()) {
+            return (float) userIds.size() / cars.size();
+        }
+
+        return 0f;
     }
 }
