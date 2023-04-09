@@ -5,8 +5,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -21,9 +23,11 @@ public class Customer {
     private Long id;
 
     @JsonView(CustomJsonView.CoreData.class)
+    @NotNull
     private String name;
 
     @JsonView(CustomJsonView.CoreData.class)
+    @Length(min = 13, max = 13)
     private String cnp;
 
     @JsonView(CustomJsonView.CoreData.class)

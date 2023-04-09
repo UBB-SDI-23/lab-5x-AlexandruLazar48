@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +30,7 @@ public class Car {
     private UUID code;
 
     @JsonView(CustomJsonView.CoreData.class)
+    @NotNull
     private String make;
 
     @JsonView(CustomJsonView.CoreData.class)
@@ -39,6 +43,8 @@ public class Car {
     private Integer horsepower;
 
     @JsonView(CustomJsonView.CoreData.class)
+    @Min(1950)
+    @Max(2023)
     private Integer yearOfFabrication;
 
     @OneToOne(cascade = CascadeType.ALL)

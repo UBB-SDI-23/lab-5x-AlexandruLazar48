@@ -55,8 +55,10 @@ public class CarService {
         for (Car car : cars) {
             Set<Long> userIds = new HashSet<Long>();
             List<RentalTransaction> carRentalTransactions = car.getRentalTransactions();
-            carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
-            count = count + userIds.size();
+            if (carRentalTransactions != null) {
+                carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
+                count = count + userIds.size();
+            }
         }
 
         if (count !=0 && !cars.isEmpty()) {
@@ -66,31 +68,38 @@ public class CarService {
         return 0f;
     }
 
-    public List<Pair<Integer, Car>> getCarsAboveAverageSortedByMake(String make) {
+    public List<Car> getCarsAboveAverageSortedByMake(String make) {
         List<Car> cars = this.findAll().stream().filter(car -> car.getMake().toLowerCase().equalsIgnoreCase(make)).collect(Collectors.toList());
         List<Pair<Integer, Car>> orderedCars = new ArrayList<>();
 
         for (Car car : cars) {
             Set<Long> userIds = new HashSet<Long>();
             List<RentalTransaction> carRentalTransactions = car.getRentalTransactions();
-            carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
+            if (carRentalTransactions != null) {
+                carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
+            }
             orderedCars.add(Pair.of(userIds.size(), car));
         }
 
         orderedCars.sort(Comparator.comparing(Pair::getFirst));
 
-        return orderedCars;
+        List<Car> orderedCarsList = new ArrayList<>();
+        orderedCars.forEach(pair -> orderedCarsList.add(pair.getSecond()));
+
+        return orderedCarsList;
     }
 
-    public Float getAverageRentalsByHp(Integer hp) {
+    public Float getAverageRentalsAboveHp(Integer hp) {
         List<Car> cars = this.findAll().stream().filter(car -> car.getHorsepower() > hp).collect(Collectors.toList());
         int count = 0;
 
         for (Car car : cars) {
             List<Long> userIds = new ArrayList<Long>();
             List<RentalTransaction> carRentalTransactions = car.getRentalTransactions();
-            carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
-            count = count + userIds.size();
+            if (carRentalTransactions != null) {
+                carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
+                count = count + userIds.size();
+            }
         }
 
         if (count !=0 && !cars.isEmpty()) {
@@ -100,20 +109,23 @@ public class CarService {
         return 0f;
     }
 
-    public List<Pair<Integer, Car>> getCarsAboveAverageSortedByHp(Integer hp) {
+    public List<Car> getCarsAboveHpSortedByRentals(Integer hp) {
         List<Car> cars = this.findAll().stream().filter(car -> car.getHorsepower() > hp).collect(Collectors.toList());
         List<Pair<Integer, Car>> orderedCars = new ArrayList<>();
 
         for (Car car : cars) {
             List<Long> userIds = new ArrayList<>();
             List<RentalTransaction> carRentalTransactions = car.getRentalTransactions();
-            carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
-
+            if (carRentalTransactions != null) {
+                carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
+            }
             orderedCars.add(Pair.of(userIds.size(), car));
         }
 
         orderedCars.sort(Comparator.comparing(Pair::getFirst));
+        List<Car> orderedCarsList = new ArrayList<>();
+        orderedCars.forEach(pair -> orderedCarsList.add(pair.getSecond()));
 
-        return orderedCars;
+        return orderedCarsList;
     }
 }

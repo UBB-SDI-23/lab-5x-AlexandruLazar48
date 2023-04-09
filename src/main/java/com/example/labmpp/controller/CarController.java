@@ -8,8 +8,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.ArrayList;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 @RestController
@@ -44,8 +45,13 @@ public class CarController {
 
     @PostMapping("")
     @JsonView(CustomJsonView.CoreData.class)
-    public ResponseEntity<Car> addCar(@RequestBody Car car) {
-        Car newCar = carService.addCar(car);
+    public ResponseEntity<Car> addCar(@RequestBody Car car) throws Exception {
+        Car newCar;
+        try {
+            newCar = carService.addCar(car);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(newCar, HttpStatus.CREATED);
     }
 
@@ -67,11 +73,8 @@ public class CarController {
     @JsonView(CustomJsonView.CoreData.class)
     public ResponseEntity<SortedCarsDto> getMostRentedByMake(@PathVariable("make") String make) {
         SortedCarsDto sortedCarsDto = new SortedCarsDto();
-        List<Car> orderedCars = new ArrayList<>();
 
-        carService.getCarsAboveAverageSortedByMake(make).forEach(pair -> orderedCars.add(pair.getSecond()));
-
-        sortedCarsDto.setCars(orderedCars);
+        sortedCarsDto.setCars(carService.getCarsAboveAverageSortedByMake(make));
         sortedCarsDto.setAverage(carService.getAverageRentalsByMake(make));
 
         return new ResponseEntity<>(sortedCarsDto, HttpStatus.OK);
@@ -82,12 +85,9 @@ public class CarController {
     @JsonView(CustomJsonView.CoreData.class)
     public ResponseEntity<SortedCarsDto> getMostRentedByMake(@PathVariable("hp") Integer hp) {
         SortedCarsDto sortedCarsDto = new SortedCarsDto();
-        List<Car> orderedCars = new ArrayList<>();
 
-        carService.getCarsAboveAverageSortedByHp(hp).forEach(pair -> orderedCars.add(pair.getSecond()));
-
-        sortedCarsDto.setCars(orderedCars);
-        sortedCarsDto.setAverage(carService.getAverageRentalsByHp(hp));
+        sortedCarsDto.setCars(carService.getCarsAboveHpSortedByRentals(hp));
+        sortedCarsDto.setAverage(carService.getAverageRentalsAboveHp(hp));
 
         return new ResponseEntity<>(sortedCarsDto, HttpStatus.OK);
     }
