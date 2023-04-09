@@ -5,6 +5,7 @@ import com.example.labmpp.entities.RentalTransaction;
 import com.example.labmpp.exception.CarNotFoundException;
 import com.example.labmpp.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -65,18 +66,18 @@ public class CarService {
         return 0f;
     }
 
-    public List<Car> getCarsAboveAverageSortedByMake(String make) {
+    public List<Pair<Integer, Car>> getCarsAboveAverageSortedByMake(String make) {
         List<Car> cars = this.findAll().stream().filter(car -> car.getMake().toLowerCase().equalsIgnoreCase(make)).collect(Collectors.toList());
-        List<Car> orderedCars = new ArrayList<>();
-        int count = 0;
+        List<Pair<Integer, Car>> orderedCars = new ArrayList<>();
 
         for (Car car : cars) {
             Set<Long> userIds = new HashSet<Long>();
             List<RentalTransaction> carRentalTransactions = car.getRentalTransactions();
             carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
-            count = count + userIds.size();
-            orderedCars.add(car);
+            orderedCars.add(Pair.of(userIds.size(), car));
         }
+
+        orderedCars.sort(Comparator.comparing(Pair::getFirst));
 
         return orderedCars;
     }
@@ -99,18 +100,19 @@ public class CarService {
         return 0f;
     }
 
-    public List<Car> getCarsAboveAverageSortedByHp(Integer hp) {
+    public List<Pair<Integer, Car>> getCarsAboveAverageSortedByHp(Integer hp) {
         List<Car> cars = this.findAll().stream().filter(car -> car.getHorsepower() > hp).collect(Collectors.toList());
-        List<Car> orderedCars = new ArrayList<>();
-        int count = 0;
+        List<Pair<Integer, Car>> orderedCars = new ArrayList<>();
 
         for (Car car : cars) {
             List<Long> userIds = new ArrayList<>();
             List<RentalTransaction> carRentalTransactions = car.getRentalTransactions();
             carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
-            count = count + userIds.size();
-            orderedCars.add(car);
+
+            orderedCars.add(Pair.of(userIds.size(), car));
         }
+
+        orderedCars.sort(Comparator.comparing(Pair::getFirst));
 
         return orderedCars;
     }
