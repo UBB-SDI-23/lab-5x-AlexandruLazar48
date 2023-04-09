@@ -48,18 +48,70 @@ public class CarService {
     }
 
     public Float getAverageRentalsByMake(String make) {
-        List<Car> cars = this.findAll().stream().filter(car -> car.getMake().contains(make)).collect(Collectors.toList());
-        Set<Long> userIds = new HashSet<Long>();
+        List<Car> cars = this.findAll().stream().filter(car -> car.getMake().toLowerCase().equalsIgnoreCase(make)).collect(Collectors.toList());
+        int count = 0;
 
         for (Car car : cars) {
+            Set<Long> userIds = new HashSet<Long>();
             List<RentalTransaction> carRentalTransactions = car.getRentalTransactions();
             carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
+            count = count + userIds.size();
         }
 
-        if (!userIds.isEmpty() && !cars.isEmpty()) {
-            return (float) userIds.size() / cars.size();
+        if (count !=0 && !cars.isEmpty()) {
+            return (float) count / cars.size();
         }
 
         return 0f;
+    }
+
+    public List<Car> getCarsAboveAverageSortedByMake(String make) {
+        List<Car> cars = this.findAll().stream().filter(car -> car.getMake().toLowerCase().equalsIgnoreCase(make)).collect(Collectors.toList());
+        List<Car> orderedCars = new ArrayList<>();
+        int count = 0;
+
+        for (Car car : cars) {
+            Set<Long> userIds = new HashSet<Long>();
+            List<RentalTransaction> carRentalTransactions = car.getRentalTransactions();
+            carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
+            count = count + userIds.size();
+            orderedCars.add(car);
+        }
+
+        return orderedCars;
+    }
+
+    public Float getAverageRentalsByHp(Integer hp) {
+        List<Car> cars = this.findAll().stream().filter(car -> car.getHorsepower() > hp).collect(Collectors.toList());
+        int count = 0;
+
+        for (Car car : cars) {
+            List<Long> userIds = new ArrayList<Long>();
+            List<RentalTransaction> carRentalTransactions = car.getRentalTransactions();
+            carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
+            count = count + userIds.size();
+        }
+
+        if (count !=0 && !cars.isEmpty()) {
+            return (float) count / cars.size();
+        }
+
+        return 0f;
+    }
+
+    public List<Car> getCarsAboveAverageSortedByHp(Integer hp) {
+        List<Car> cars = this.findAll().stream().filter(car -> car.getHorsepower() > hp).collect(Collectors.toList());
+        List<Car> orderedCars = new ArrayList<>();
+        int count = 0;
+
+        for (Car car : cars) {
+            List<Long> userIds = new ArrayList<>();
+            List<RentalTransaction> carRentalTransactions = car.getRentalTransactions();
+            carRentalTransactions.forEach(carRentalTransaction -> userIds.add(carRentalTransaction.getCustomer().getId()));
+            count = count + userIds.size();
+            orderedCars.add(car);
+        }
+
+        return orderedCars;
     }
 }

@@ -29,10 +29,14 @@ public class RentalTransaction {
     @JsonView({CustomJsonView.FullDataCar.class, CustomJsonView.FullDataRentalTransaction.class})
     Customer customer;
 
+    @Override
+    public String toString() {
+        return "RentalTransaction{}";
+    }
+
     @JsonView(CustomJsonView.CoreData.class)
     Integer startTime;
 
     @JsonView(CustomJsonView.CoreData.class)
     Integer endTime;
-
 }
