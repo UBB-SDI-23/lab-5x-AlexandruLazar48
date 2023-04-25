@@ -1,0 +1,57 @@
+<div class="flex justify-content-between">
+    <h2 style="padding-left: 1%;">Cars</h2>
+</div>
+
+<p-table [value]="cars" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Id</th>
+            <th>Code</th>
+            <th>Make</th>
+            <th>Model</th>
+            <th>Value</th>
+            <th>Horsepower</th>
+            <th>Fabrication Year</th>
+            <th>    
+                <p-button style="padding-right: 1%;" label="Add Car" (click)="showAddModal()"></p-button>
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-car>
+        <tr>
+            <td>{{ car.id }}</td>
+            <td>{{ car.code }}</td>
+            <td>{{ car.make }}</td>
+            <td>{{ car.model }}</td>
+            <td>{{ car.value }}</td>
+            <td>{{ car.horsepower }}</td>
+            <td>{{ car.yearOfFabrication }}</td>
+            <td>
+                <button
+                  pButton
+                  icon="pi pi-pencil"
+                  class="p-button-rounded p-button-success mr-2"
+                  (click)="showEditModal(car)"
+                ></button>
+                <button
+                  pButton
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-warning"
+                  (click)="deleteCar(car)"
+                ></button>
+            </td>
+            
+        </tr>
+    </ng-template>
+</p-table>
+
+<app-add-edit-car
+    [displayAddEditModal]="displayAddEditModal"
+    [selectedCar]="selectedCar"
+    (clickClose)="hideAddModal($event)"
+    (clickAdd)="saveCarToList($event)"
+>
+</app-add-edit-car>
+
+<p-confirmDialog header="Delete"></p-confirmDialog>
+<p-toast position="bottom-right"></p-toast>

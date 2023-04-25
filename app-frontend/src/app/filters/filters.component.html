@@ -1,0 +1,47 @@
+<div>
+    <table>
+        <tr>
+            <td>
+                <input type="text" [(ngModel)] = "make"/>
+            </td>
+            <td>
+                <p-button
+                    (click)="getMostRentedByMake(make)"
+                    label="Search"
+                    styleClass="p-button-sm"
+                ></p-button>
+            </td>
+            </tr>
+    </table>
+</div>
+
+<div class="flex justify-content-between">
+    <h2 style="padding-left: 1%;">Sorted by most unique renters. Average renters / make: {{average}}</h2>
+</div>
+
+<p-table [value]="carsFiltered" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Id</th>
+            <th>Code</th>
+            <th>Make</th>
+            <th>Model</th>
+            <th>Value</th>
+            <th>Horsepower</th>
+            <th>Fabrication Year</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-car>
+        <tr>
+            <td>{{ car.id }}</td>
+            <td>{{ car.code }}</td>
+            <td>{{ car.make }}</td>
+            <td>{{ car.model }}</td>
+            <td>{{ car.value }}</td>
+            <td>{{ car.horsepower }}</td>
+            <td>{{ car.yearOfFabrication }}</td>
+            
+        </tr>
+    </ng-template>
+</p-table>
+

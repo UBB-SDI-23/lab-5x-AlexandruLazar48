@@ -30,7 +30,11 @@ public class CarService {
     }
 
     public Car updateCar(Car car) {
-        return carRepository.save(car);
+        if (findCarById(car.getId()) != null) {
+            return carRepository.save(car);
+        } else {
+            throw new CarNotFoundException("Car by id " + car.getId() + " was not found");
+        }
     }
 
     public void deleteCar(Long id) {

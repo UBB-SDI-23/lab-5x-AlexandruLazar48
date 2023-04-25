@@ -1,0 +1,97 @@
+<p-dialog
+  header="{{modalType}} Car"
+  [(visible)]="displayAddEditModal"
+  [modal]="true"
+  [style]="{ width: '50vw' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="closeModal()"
+>
+  <form [formGroup]="carForm" class="car-form">
+    <div class="field">
+      <label class="block" for="make">Make</label>
+      <input type="text" pInputText id="make" formControlName="make" />
+      <small
+        class="p-error block"
+        *ngIf="
+          carForm.controls['make'].invalid &&
+          carForm.controls['make'].dirty
+        "
+        >Field is required</small
+      >
+    </div>
+    <div class="field">
+      <label class="block" for="model">Model</label>
+      <input type="text" pInputText id="model" formControlName="model" />
+      <small
+        class="p-error block"
+        *ngIf="
+          carForm.controls['model'].invalid &&
+          carForm.controls['model'].dirty
+        "
+        >Field is required</small
+      >
+    </div>
+    <div class="field">
+        <label class="block" for="value">Value</label>
+        <p-inputNumber
+        id="value"
+        formControlName="value"
+        class="block"
+      ></p-inputNumber>
+        <small
+          class="p-error block"
+          *ngIf="
+            carForm.controls['value'].invalid &&
+            carForm.controls['value'].dirty
+          "
+          >Field is required</small
+        >
+      </div>
+    <div class="field">
+      <label class="block" for="horsepower">Horsepower</label>
+      <p-inputNumber
+      id="horsepower"
+      formControlName="horsepower"
+      class="block"
+    ></p-inputNumber>
+      <small
+        class="p-error block"
+        *ngIf="
+          carForm.controls['horsepower'].invalid &&
+          carForm.controls['horsepower'].dirty
+        "
+        >Field is required</small
+      >
+    </div>
+    <div class="field">
+      <label class="block" for="yearOfFabrication">Fabrication Year</label>
+      <p-inputNumber
+      id="yearOfFabrication"
+      formControlName="yearOfFabrication"
+      class="block"
+    ></p-inputNumber>
+      <small
+        class="p-error block"
+        *ngIf="
+          carForm.controls['yearOfFabrication'].invalid &&
+          carForm.controls['yearOfFabrication'].dirty
+        "
+        >Field is required</small
+      >
+    </div>
+  </form>
+  <ng-template pTemplate="footer">
+    <p-button
+      (click)="closeModal()"
+      label="Cancel"
+      styleClass="p-button-text"
+    ></p-button>
+
+    <p-button
+      (click)="addEditCar()"
+      label="{{modalType}}"
+      [disabled]="carForm.invalid"
+    ></p-button>
+  </ng-template>
+</p-dialog>
