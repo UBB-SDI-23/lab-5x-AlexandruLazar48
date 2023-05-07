@@ -39,4 +39,7 @@ public class RentalTransaction {
 
     @JsonView(CustomJsonView.CoreData.class)
     Integer endTime;
+
+    @JsonView(CustomJsonView.CoreData.class)
+    Float value;
 }
